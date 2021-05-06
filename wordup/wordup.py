@@ -1,37 +1,40 @@
 import click
 import clipboard
 from db_utils import *
-from utils import generate_password
-from validation import validate_name
+from utils import generate_password, validate_name
 from hibp_api import check_pw_hibp
-
 
 @click.command()
 @click.option('--key', prompt="wordup password", hide_input=True)
-@click.option('-p', '--password', 'password', prompt="password to set", hide_input=True,
-              confirmation_prompt=True)
+@click.option('-p', '--password', 'password', prompt="password to set",
+                hide_input=True, confirmation_prompt=True)
 @click.argument('name', callback=validate_name)
 def add(key, password, name):
     '''
-    Adds a password to the db with a 'name'. 
+    Adds a password to the db with a 'name'.
 
-    Password is checked against the HIBP pwned passwords API and will 
+    Password is checked against the HIBP pwned passwords API and will
     only be added if it is not present in their list of leaked passwords.
 
-    Parameters: 
+    Parameters:
         - key: string, key to encrypted db
         - password: string, new password to add
         - name: string, name of password to be added
     '''
     try:
         if not check_pw_hibp(password):
-            click.echo(click.style('The password you entered has been leaked in a data breach and therefore is insecure, please enter a different password.\nFor more information see https://haveibeenpwned.com/Passwords', fg='red'))
+            msg = ('The password you entered has been leaked in a data breach '
+                    'and therefore is insecure, please enter a different '
+                    'password.\nFor more information see '
+                    'https://haveibeenpwned.com/Passwords')
+            click.echo(click.style(msg, fg='red'))
             return
         # add_pw_to_db(key, password, name)
         click.echo('Password for {} successfully added'.format(name))
-    except Exception as e:
-        click.echo(click.style('Could not add password, please ensure you entered your wordup password correctly.', fg='red'))
-
+    except Exception:
+        msg = ('Could not add password, please ensure you entered your wordup '
+                'password correctly.')
+        click.echo(click.style(msg, fg='red'))
 
 
 @click.command()
@@ -51,19 +54,23 @@ def get(key, name):
 @click.argument('name', callback=validate_name)
 def delete(key, name):
     try:
-        delete_pw_from_db(key, name)
+        # delete_pw_from_db(key, name)
         click.echo('Password for {} deleted'.format(name))
     except Exception as e:
         click.echo(e.args)
-        
+
 
 @click.command()
+@click.option('-p', '--password', 'password', prompt="password to set",
+                hide_input=True, confirmation_prompt=True)
 def check(password):
-    try:
-        click.echo('Checking if password has been comprimised...')
-        # check_pw_hibp(password)
-    except Exception as e:
-        click.echo(e.args)
+    click.echo('\nChecking if password has been comprimised...')
+    if check_pw_hibp(password):
+        click.echo("Password has not been pwned!")
+    else:
+        msg = ("Password is the haveibeenpwned pwned passwords database! "
+                    "Don't use that password!")
+        click.echo(click.style(msg, fg='red'))
 
 
 @click.command()
