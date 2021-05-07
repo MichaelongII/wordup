@@ -1,5 +1,6 @@
 from pysqlite3 import dbapi2 as sqleet
 import click
+import pathlib
 
 
 def create_db(key):
@@ -8,7 +9,7 @@ def create_db(key):
 
     Parameter - key: string, key to encrypted db
     '''
-    con = sqleet.connect('wordup.db')
+    con = sqleet.connect(str(pathlib.Path(__file__).parent.absolute()) + '/wordup.db')
     cur = con.cursor()
     cur.execute("PRAGMA key=':key'", {"key": key})
     cur.execute("create table pw (name, password)")

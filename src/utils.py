@@ -1,6 +1,4 @@
 import click
-import os
-from functools import update_wrapper
 
 def validate_name(ctx, param, value):
     if not value.isalnum():

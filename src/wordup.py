@@ -2,8 +2,9 @@
 import click
 import clipboard
 import os.path
+import pathlib
 from db_utils import *
-from utils import generate_password, validate_name, print_general_error
+from utils import validate_name
 from hibp_api import check_pw_hibp
 
 @click.command()
@@ -25,17 +26,16 @@ def add(key, password, name):
     '''
     try:
         if not check_pw_hibp(password):
-            msg = ('\nThe password you entered has been leaked in a data breach '
-                    'and therefore is insecure, please enter a different '
+            msg = ('\nwarning: the password you entered has been leaked in a data breach '
+                    'please consider using a different '
                     'password.\nFor more information see '
                     'https://haveibeenpwned.com/Passwords')
-            click.echo(click.style(msg, fg='red'))
-            return
+            click.echo(click.style(msg, fg='yellow'))
         add_pw_to_db(key, password, name)
         click.echo("\nPassword '{}' successfully added".format(name))
 
     except DuplicateNameAdd:
-        msg = ('That name has already been added, please add this password'
+        msg = ('\nThat name has already been added, please add this password '
                 'under a different name.')
         click.echo(click.style(msg, fg='red'))
 
@@ -134,7 +134,6 @@ def init(key):
 def first_run():
     pass
 
-
 @click.group()
 def cli():
     pass
@@ -149,7 +148,7 @@ first_run.add_command(init)
 
 
 if __name__ == '__main__':
-    if os.path.exists('wordup.db'):
+    if os.path.exists(str(pathlib.Path(__file__).parent.absolute()) + '/wordup.db'):
         cli()
     else:
         first_run()
