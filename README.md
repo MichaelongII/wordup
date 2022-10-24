@@ -23,15 +23,14 @@ Commands:
 
 
 #### Commands:
-1. ```add <name>```
-- stores password in user's db with a given name
-- checks if given password has been leaked in a data breach with the [HIBP API](https://haveibeenpwned.com/API/v3)
+1. ```init```
+- creates a local [sqleet](https://github.com/resilar/sqleet) database to store user's passwords
 
 2. ```add <name>```
 - stores password in user's db with a given name
 - checks if given password has been leaked in a data breach with the [HIBP API](https://haveibeenpwned.com/API/v3)
 
-3. ```<name>```
+3. ```get <name>```
 - gets the password with <name> from db and puts it in user's clipboard
 
 4. ```clear```
