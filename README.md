@@ -4,7 +4,7 @@
 - create a virtual env and activate: ```virtualenv venv --python=python3 && source venv/bin/activate```
 - install dependecies: ```pip install -r requirements.txt```
 - complie encrypted SQLite db: ```./setup.sh```
-- create local encrypted db: ```./src/wordup.py init```
+- enter main password and create local encrypted db: ```./src/wordup.py init```
 
 ```
 $ ./src/wordup.py     
